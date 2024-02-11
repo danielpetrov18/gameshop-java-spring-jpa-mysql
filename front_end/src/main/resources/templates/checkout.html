@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .total-amount {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .place-order-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .place-order-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <form id="checkoutForm">
+        <div id="cartItemsContainer"></div> <!-- Cart items will be added here -->
+        <div class="form-group">
+            <label for="shippingMethod">Choose a shipping method:</label>
+            <select id="shippingMethod" name="shippingMethod" class="form-control">
+                <option value="STANDARD">Standard Shipping</option>
+                <option value="EXPRESS">Express Shipping</option>
+                <option value="INTERNATIONAL">International Shipping</option>
+            </select>
+        </div>
+        <button type="submit" class="place-order-btn">Place Order</button>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+<script>
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const cartItemsContainer = document.createElement('div');
+        let totalAmount = 0;
+
+        cart.forEach(game => {
+            const itemDiv = document.createElement('div');
+            itemDiv.textContent = `${game.gameName} - $${game.price} x ${game.quantity}`;
+            cartItemsContainer.appendChild(itemDiv);
+
+            totalAmount += game.price * game.quantity;
+        });
+
+        const totalAmountDiv = document.createElement('div');
+        totalAmountDiv.textContent = `Total: $${totalAmount.toFixed(2)}`;
+        cartItemsContainer.appendChild(totalAmountDiv);
+
+        const form = document.getElementById('checkoutForm');
+        form.insertBefore(cartItemsContainer, form.firstChild);
+    });
+
+    document.getElementById('checkoutForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const shippingMethod = document.getElementById('shippingMethod').value;
+        // Create an order object with gameId, quantity, userId, order dateTime, and shippingMethod
+        const order = {
+            items: cart.map(item => ({
+                gameId: item.gameId,
+                quantity: item.quantity
+                // Add other relevant item details if needed
+            })),
+            shippingMethod: shippingMethod,
+            username: localStorage.getItem('username'), // Replace with actual user ID
+            orderDateTime: new Date().toISOString() // Current date-time
+        };
+        console.log(order)
+
+        fetch('http://localhost:8080/orders/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(order)
+
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const successMessageDiv = document.createElement('div');
+                successMessageDiv.textContent = 'Order successfully created!';
+                successMessageDiv.style.color = 'green'; // Style the message
+
+                // Append the success message to the container or another suitable element
+                document.querySelector('.container').appendChild(successMessageDiv);
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+    });
+
+</script>
+</body>
+</html>
