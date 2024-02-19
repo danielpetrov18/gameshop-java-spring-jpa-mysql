@@ -31,4 +31,23 @@ This project utilizes JPA (Java Persistence API) with Spring Data JPA to interac
 
 Usage
 
-Once the Docker container is running and the database is configured, users can access the website to [provide description of the functionality or features available to users].
+How to run the project
+
+To run the project one must navigate to the root directory of the project.
+There should be a ‘docker-compose.yml’ file and after running the
+command ‘docker compose up’ a container is started. All the build work
+is done automatically by docker and only the necessary ports are being
+exposed.
+The container consists of three running applications - frontend, backend
+which are Spring boot applications and a MySQL database. They are all
+isolated from one another and work in a shared network.
+The backend can be accessed at ‘http://localhost:8080’. There one can
+find 2 buttons - one for filling the database with random data. If there’s
+already available data in the database it gets deleted and a new set is
+generated. The other button is for the best selling games report where
+one can filter based on genre and sort the games in ascending or
+descending order based on the total profit - game price * quantity of a
+purchased game across all orders.
+The frontend can be accessed at ‘https://localhost:8443’ where one can
+interact with the web system and check out the use cases and the best
+rated game based on rating reviews report.
