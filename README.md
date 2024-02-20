@@ -4,7 +4,7 @@ In collaboration with https://github.com/dzon337.
 
 Overview
 
-This project is a web application. It models a very simplified version of a platform similar to Steam, providing features for purchasing games, uploading reviews and befriending other users.
+This project exposes a simple CRUD api for interacting with a database and display the data. It models a very simplified version of a platform similar to Steam, providing features for purchasing games, uploading reviews and befriending other users.
 
 Technologies Used
 
